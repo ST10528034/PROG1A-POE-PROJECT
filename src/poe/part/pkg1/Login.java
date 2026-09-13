@@ -10,19 +10,20 @@ package poe.part.pkg1;
  */
 public class Login extends Registration {
     
-    public boolean loginUser(String name, String password){
-    if(name.equals(userName) && password.equals(password)){
-        return true;
-    }else{
-            return false;
-            }
+    public boolean loginUser(String username, String password){ //this is the method for number 2.login to the account using the same username and password.
+        return this.userName.equals(username) &&
+                this.passWord.equals(password);
     }
     
-    public String returnLoginStatus(boolean loginStatus) {
-        if (loginStatus){
-            return "Login success";
-        }else{
-            return "Login failed";
-        }
-    }
+    public String returnLoginStatus(String username, String password, String kyle, String smith){
+    
+         if (loginUser(username, password)){
+             String firstName = "Kutlwi";
+             String lastName = "Malope";
+             return "Welcome " + firstName + " " + lastName + " It is great to see you again. ";
+}else{
+    return "Username or password incorrect, please try again.";
+} 
+    
+}
 }

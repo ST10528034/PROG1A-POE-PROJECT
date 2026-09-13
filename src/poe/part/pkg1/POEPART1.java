@@ -22,24 +22,44 @@ public class POEPART1 {
         
         System.out.println("\n==== Register ====");
         
-        System.out.println("please enter the username:");
-        String name = scan.nextLine();//this nextLine is for reading a string
+        //username input and checker
+        System.out.println("Enter your username: ");
+        String username = scan.nextLine();//this nextLine is for reading a string
         
         //password input and checker
-        System.out.println("Enter password");
+        System.out.println("Enter your password: ");
         String password = scan.nextLine();
         
-        System.out.println("Enter cellphone");
+         //cellphone input and checker
+        System.out.println("Enter your cellphone number: ");
         String cellphone = scan.nextLine();
         
-        System.out.println(register.registerUser(name, 
-                password, cellphone));
+        System.out.println(register.registerUser(
+                username, 
+                password, 
+                cellphone));
         
-        if(register.registerStatus(name, password, cellphone)){
-        return;
+        if(register.registerStatus(username, password, cellphone)){
+             
+            System.out.println("\n===== Login =====");
+            
+            System.out.println("Enter username: ");
+            String loginUsername = scan.nextLine();
+            
+            System.out.println("Enter password; ");
+            String loginPassword = scan.nextLine();
+            
+            String message = register.returnLoginStatus(
+                             loginUsername,
+                             loginPassword,
+                             "Kutlwi",
+                             "Malope");
+               
+            System.out.println(message);
+        }        
+        scan.close();
         }
         
-        System.out.println("\n==== Register ====");
     }
     
-}
+
