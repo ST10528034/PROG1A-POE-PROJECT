@@ -4,6 +4,8 @@
  */
 package poe.part.pkg1;
 
+import java.util.Scanner;
+
 /**
  *
  * @author Student
@@ -16,10 +18,10 @@ public class Registration { //start of class
     
     public boolean checkUserName(String username){ //start of username method
         if(username.contains("_") && username.length() <= 5){
-            System.out.println("Username successully captured.");
+            //System.out.println("Username successully captured.");
             return true;
         }else{
-            System.out.println("Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.");
+           // System.out.println("Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.");
             return false;       
         }
     } //end of username method
@@ -30,20 +32,20 @@ public class Registration { //start of class
                 password.matches(".*[a-z].*") &&
                 password.matches(".*\\d.*") &&
                 password.matches(".*[^a-zA-Z0-9].*")){
-        System.out.println("Password successfully captured.");
+       //System.out.println("Password successfully captured.");
         return true;
         }else{
-            System.out.println("Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.");
+           // System.out.println("Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.");
             return false;
             }
     }//end of password method
     
     public boolean checkCellPhoneNumber(String cellphone){ //start of the method for checking cellphone number length is correct
         if(cellphone.matches(".*^0[678][0-9]{8}$") || cellphone.matches(".*^\\+27[678][0-9]{8}$")){
-            System.out.println("Cell phone number successfully captured.");
+           //System.out.println("Cell phone number successfully captured.");
             return true;
         }else{
-            System.out.println("Cell phone number INCORRECTLY formatted or does not contain international code.");
+           // System.out.println("Cell phone number INCORRECTLY formatted or does not contain international code.");
             return false;
         }
         
@@ -61,11 +63,23 @@ public class Registration { //start of class
                 validPassword &&
                 validCellphone){
             this.userName = username;
+            System.out.println("Username successfully captured.");
             this.passWord = password;
+            System.out.println("Password successfully captured.");
             this.cellPhone = cellphone;
+            System.out.println("Cell phone number successfully captured.");
             
             return "REGISTRATION WAS A SUCCESS!!";
         }else{
+            if(!validUsername){
+              System.out.println("Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.");
+            }
+            if(!validPassword){
+                 System.out.println("Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.");
+            }
+            if(!validCellphone){
+               System.out.println("Cell phone number INCORRECTLY formatted or does not contain international code."); 
+            }
             return "REGISTRATION WAS UNSUCCESSFUL!!";
         }
         
@@ -89,10 +103,17 @@ public class Registration { //start of class
     }
     
     public String returnLoginStatus(String username, String password, String kyle, String smith){
+        
+        Scanner input = new Scanner(System.in);
+        
+        System.out.println("Enter your first name: ");
+        String firstName = input.nextLine();
+        
+        System.out.println("Enter your last name: ");
+        String lastName = input.nextLine();
     
          if (loginUser(username, password)){
-             String firstName = null;
-             String lastName = null;
+             
              return "Welcome " + firstName + " " + lastName + " It is great to see you again. ";
 }else{
     return "Username or password incorrect, please try again.";

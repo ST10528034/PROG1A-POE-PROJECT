@@ -4,6 +4,8 @@
  */
 package poe.part.pkg1;
 
+import java.util.Scanner;
+
 /**
  *
  * @author Student
@@ -16,10 +18,17 @@ public class Login extends Registration {
     }
     
     public String returnLoginStatus(String username, String password, String kyle, String smith){
+        
+        Scanner input = new Scanner(System.in);
+        
+        System.out.println("Enter your first name: ");
+        String firstName = input.nextLine();
+        
+        System.out.println("Enter your last name: ");
+        String lastName = input.nextLine();
     
          if (loginUser(username, password)){
-             String firstName = "Kutlwi";
-             String lastName = "Malope";
+             
              return "Welcome " + firstName + " " + lastName + " It is great to see you again. ";
 }else{
     return "Username or password incorrect, please try again.";
