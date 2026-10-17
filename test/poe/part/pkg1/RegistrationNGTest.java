@@ -4,6 +4,7 @@
  */
 package poe.part.pkg1;
 
+import poe.part.pkg2.Registration;
 import static org.testng.Assert.*;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
