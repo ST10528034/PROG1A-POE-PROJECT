@@ -12,8 +12,8 @@ public class Login {
     private String username;
     private String password;
     private String cellNumber;
-    private String firstName;
-    private String lastName;
+    private final String firstName;
+    private final String lastName;
 
     public Login(String firstName, String lastName) {
         this.firstName = firstName;
@@ -48,10 +48,22 @@ public class Login {
         return hasCapital && hasNumber && hasSpecial;
     }
 
-    // Cell number: international code (+ and 1-3 digits) followed by up to ten digits
-    public boolean checkCellPhoneNumber(String cellNumber) {
+    // Local South African number: starts with 0 and has ten digits in total, e.g. 0817421062
+    public boolean checkLocalNumber(String cellNumber) {
+        return cellNumber != null
+                && cellNumber.matches("^0[0-9]{9}$");
+    }
+
+    // International number: + and a 1-3 digit country code, then up to ten digits, e.g. +27817421062
+    public boolean checkInternationalNumber(String cellNumber) {
         return cellNumber != null
                 && cellNumber.matches("^\\+[0-9]{1,3}[0-9]{1,10}$");
+    }
+
+    // Accepts either a local number (0817421062) or an international number (+27817421062)
+    public boolean checkCellPhoneNumber(String cellNumber) {
+        return checkLocalNumber(cellNumber)
+                || checkInternationalNumber(cellNumber);
     }
 
     // Validates every field and stores the details if they are all correct

@@ -81,14 +81,26 @@ public final class Message {
         return messageID != null && messageID.length() <= 10;
     }
 
-    // Recipient must start with an international code (+ and 1-3 digits) followed by up to ten digits
+    // Checks the recipient stored in this message
     public String checkRecipientCell() {
         return checkRecipientCell(recipient);
     }
 
-    // Same check for any number, so a recipient can be validated before a message exists
+    // Local number without an international code: 0 followed by nine digits, e.g. 0817421062
+    public static boolean checkLocalRecipient(String cellNumber) {
+        return cellNumber != null
+                && cellNumber.matches("^0[0-9]{9}$");
+    }
+
+    // International number: + and a 1-3 digit country code, then up to ten digits, e.g. +27718693002
+    public static boolean checkInternationalRecipient(String cellNumber) {
+        return cellNumber != null
+                && cellNumber.matches("^\\+[0-9]{1,3}[0-9]{1,10}$");
+    }
+
+    // Accepts either a local number or an international number
     public static String checkRecipientCell(String cellNumber) {
-        if (cellNumber != null && cellNumber.matches("^\\+[0-9]{1,3}[0-9]{1,10}$")) {
+        if (checkLocalRecipient(cellNumber) || checkInternationalRecipient(cellNumber)) {
             return "Cell phone number successfully captured.";
         }
         return "Cell phone number is incorrectly formatted or does not contain an "

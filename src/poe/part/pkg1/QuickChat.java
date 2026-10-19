@@ -19,7 +19,9 @@ public class QuickChat {
     public static void main(String[] args) {
         Login login = registerAndLogin();
 
-        System.out.println("\nWelcome to QuickChat.");
+        System.out.println("\n====================");
+        System.out.println("WELCOME TO QuickChat!");
+        System.out.println("====================");
 
         int totalAllowed = readInt("How many messages do you wish to enter? ", 1);
         int entered = 0;   // number of messages handled so far (also the next message number)
@@ -69,7 +71,7 @@ public class QuickChat {
             username = INPUT.nextLine().trim();
             System.out.print("Enter password (8+ chars, capital, number, special): ");
             password = INPUT.nextLine();
-            System.out.print("Enter cell number (e.g. +27718693002): ");
+            System.out.print("Enter cell number (e.g. +27718693002 / 0712345678): ");
             String cell = INPUT.nextLine().trim();
 
             String result = login.registerUser(username, password, cell);
