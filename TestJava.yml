@@ -2,7 +2,7 @@ name: Java CI (NetBeans Ant project)
 
 on:
   push:
-    branches: [ "main", "KhanbanTasks" ]
+    branches: [ "main", "master" ]
   pull_request:
     branches: [ "main" ]
 
