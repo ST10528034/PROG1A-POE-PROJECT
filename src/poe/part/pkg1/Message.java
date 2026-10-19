@@ -5,100 +5,130 @@
 package poe.part.pkg1;
 
 import java.io.FileWriter;
-import java.io.I0Exception;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
-import java.swing.J0ptionPane;
 
 /**
- *
- * @author Student
+ * Represents one QuickChat message and keeps track of every message
+ * sent or stored while the program is running.
  */
-public class Message {
+public final class Message {
 
-    // Shared across all messages while the program runs
-    private static final ArrayList<Message> sentMessages = new ArrayList<>();
-    private static final ArrayList<Message> storedMessages = new ArrayList<>();
-    private static int totalSent = 0;
+    // Lists of SENT messages (all lists stay in sync, one index per message)
+    static ArrayList<String> messageIdsList = new ArrayList<>();
+    static ArrayList<String> recipientNumber = new ArrayList<>();
+    static ArrayList<String> messages = new ArrayList<>();
+    static ArrayList<String> msgHash = new ArrayList<>();
+    static ArrayList<String> messageStatus = new ArrayList<>();
+
+    // Stored messages (written to messages.json)
+    static ArrayList<String> storedJsonEntries = new ArrayList<>();
+
+    // Every ID generated so far, so that IDs are unique
+    static HashSet<String> usedIds = new HashSet<>();
+
+    static int numMessageSent = 0;
+
+    private static final Random RANDOM = new Random();
 
     private final String messageID;
     private final int messageNumber;
     private final String recipient;
-    private final String messageText;
-    private final String messageHash;
+    private final String text;
+    private final String hash;
 
-    // Normal constructor: auto-generates the ID
-    public Message(String recipient, String messageText, int messageNumber) {
-        this(generateMessageID(), recipient, messageText, messageNumber);
+    // Creates a message with an auto-generated ten-digit ID and hash
+    public Message(String recipient, String text, int messageNumber) {
+        this(generateMessageID(), recipient, text, messageNumber);
     }
 
-    // Constructor that accepts an ID (used by unit tests)
-    public Message(String messageID, String recipient, String messageText, int messageNumber) {
+    // Creates a message with a known ID (used for testing)
+    public Message(String messageID, String recipient, String text, int messageNumber) {
         this.messageID = messageID;
-        this.recipient = recipient;
-        this.messageText = messageText;
         this.messageNumber = messageNumber;
-        this.messageHash = createMessageHash();
+        this.recipient = recipient;
+        this.text = text;
+        this.hash = createMessageHash();
     }
 
-    // Random ten-digit number (leading zeros allowed)
-    private static String generateMessageID() {
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            sb.append(random.nextInt(10));
-        }
-        return sb.toString();
+    // Clears all static data (used between unit tests)
+    public static void resetAll() {
+        messageIdsList.clear();
+        recipientNumber.clear();
+        messages.clear();
+        msgHash.clear();
+        messageStatus.clear();
+        storedJsonEntries.clear();
+        usedIds.clear();
+        numMessageSent = 0;
     }
 
-    // Message ID must not be more than ten characters
+    // Random, unused ten-digit ID (may start with zeros, e.g. 0012345678)
+    public static String generateMessageID() {
+        String id;
+        do {
+            long number = (long) (RANDOM.nextDouble() * 10_000_000_000L);
+            id = String.format("%010d", number);
+        } while (usedIds.contains(id));
+        usedIds.add(id);
+        return id;
+    }
+
+    // Message ID must be no more than ten characters
     public boolean checkMessageID() {
         return messageID != null && messageID.length() <= 10;
     }
 
-    // Number must start with an international code (+ and 1-3 digits)
-    // followed by no more than ten digits
+    // Recipient must start with an international code (+ and 1-3 digits) followed by up to ten digits
     public String checkRecipientCell() {
-        if (recipient != null && recipient.matches("^\\+\\d{1,3}\\d{1,10}$")) {
-            return "Cell phone number successfully captured.";
-        }
-        return "Cell phone number is incorrectly formatted or does not "
-                + "contain an international code. Please correct the number and try again.";
+        return checkRecipientCell(recipient);
     }
 
-    // Message must be 250 characters or fewer
-    public static String checkMessageLength(String text) {
-        if (text != null && text.length() <= 250) {
+    // Same check for any number, so a recipient can be validated before a message exists
+    public static String checkRecipientCell(String cellNumber) {
+        if (cellNumber != null && cellNumber.matches("^\\+[0-9]{1,3}[0-9]{1,10}$")) {
+            return "Cell phone number successfully captured.";
+        }
+        return "Cell phone number is incorrectly formatted or does not contain an "
+                + "international code. Please correct the number and try again.";
+    }
+
+    // Message must not exceed 250 characters
+    public static String checkMessageLength(String messageText) {
+        if (messageText != null && messageText.length() <= 250) {
             return "Message sent";
         }
         return "Please enter a message of less than 250 characters.";
     }
 
-    // Format -> 00:0:HITHANKS (first two ID digits : message number : FIRSTLAST)
-    public final String createMessageHash() {
-        String[] words = messageText.trim().split("\\s+");
-        String first = words[0].replaceAll("[^A-Za-z0-9]", "");
-        String last = words[words.length - 1].replaceAll("[^A-Za-z0-9]", "");
-        String firstTwo = messageID.length() >= 2 ? messageID.substring(0, 2) : messageID;
-        return (firstTwo + ":" + messageNumber + ":" + first + last).toUpperCase();
+    // Format: first two ID digits : message number : FIRSTWORD + LASTWORD (all caps)
+    public String createMessageHash() {
+        String firstTwoDigits = messageID.substring(0, 2);
+
+        String[] words = text.trim().split("\\s+");
+        String firstWord = words[0].replaceAll("[^A-Za-z0-9]", "");
+        String lastWord = words[words.length - 1].replaceAll("[^A-Za-z0-9]", "");
+
+        return (firstTwoDigits + ":" + messageNumber + ":" + firstWord + lastWord).toUpperCase();
     }
 
-    // Interactive version: asks the user what to do with the message
-    public String sentMessage() {
-        String[] options = {"Send Message", "Disregard Message", "Store Message"};
-        int choice = JOptionPane.showOptionDialog(null,
-                "What would you like to do with this message?",
-                "QuickChat", JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-        return sentMessage(choice + 1); // dialog returns 0,1,2
+    // Same as sentMessage (name used in the brief)
+    public String SentMessage(int choice) {
+        return sentMessage(choice);
     }
 
-    // Testable version: 1 = send, 2 = disregard, 3 = store
+    // 1 = send, 2 = disregard, 3 = store
     public String sentMessage(int choice) {
         switch (choice) {
             case 1:
-                sentMessages.add(this);
-                totalSent++;
+                messageIdsList.add(messageID);
+                recipientNumber.add(recipient);
+                messages.add(text);
+                msgHash.add(hash);
+                messageStatus.add("Sent");
+                numMessageSent++;
                 return "Message successfully sent.";
             case 2:
                 return "Press 0 to delete the message.";
@@ -106,67 +136,70 @@ public class Message {
                 storeMessage();
                 return "Message successfully stored.";
             default:
-                return "No option selected.";
+                return "Invalid option.";
         }
     }
 
     // Returns every message sent while the program is running
-    public static String printMessages() {
-        StringBuilder sb = new StringBuilder();
-        for (Message m : sentMessages) {
-            sb.append(m.details()).append("\n\n");
+    public String printMessages() {
+        StringBuilder all = new StringBuilder();
+        for (int i = 0; i < messages.size(); i++) {
+            all.append("Message ").append(i + 1)
+                    .append("\nMessage ID: ").append(messageIdsList.get(i))
+                    .append("\nMessage Hash: ").append(msgHash.get(i))
+                    .append("\nRecipient: ").append(recipientNumber.get(i))
+                    .append("\nMessage: ").append(messages.get(i))
+                    .append("\nStatus: ").append(messageStatus.get(i))
+                    .append("\n\n");
         }
-        return sb.toString();
+        return all.toString();
     }
 
     public static int returnTotalMessages() {
-        return totalSent;
+        return numMessageSent;
     }
 
-    // Stores all stored messages in a JSON file (written by hand, no library needed)
+    /*
+     * Stores the message in messages.json (a JSON array of objects).
+     * Attribution: JSON structure follows the format described at https://www.json.org ;
+     * file writing uses FileWriter inside try-with-resources as documented at
+     * https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/FileWriter.html
+     */
     public void storeMessage() {
-        storedMessages.add(this);
-        StringBuilder json = new StringBuilder("[\n");
-        for (int i = 0; i < storedMessages.size(); i++) {
-            Message m = storedMessages.get(i);
-            json.append("  {\n")
-                .append("    \"messageID\": \"").append(escape(m.messageID)).append("\",\n")
-                .append("    \"messageNumber\": ").append(m.messageNumber).append(",\n")
-                .append("    \"recipient\": \"").append(escape(m.recipient)).append("\",\n")
-                .append("    \"message\": \"").append(escape(m.messageText)).append("\",\n")
-                .append("    \"messageHash\": \"").append(escape(m.messageHash)).append("\"\n")
-                .append("  }").append(i < storedMessages.size() - 1 ? "," : "").append("\n");
-        }
-        json.append("]");
+        String entry = "  {\n"
+                + "    \"messageID\": \"" + escape(messageID) + "\",\n"
+                + "    \"messageNumber\": " + messageNumber + ",\n"
+                + "    \"recipient\": \"" + escape(recipient) + "\",\n"
+                + "    \"message\": \"" + escape(text) + "\",\n"
+                + "    \"messageHash\": \"" + escape(hash) + "\"\n"
+                + "  }";
+        storedJsonEntries.add(entry);
+
         try (FileWriter writer = new FileWriter("messages.json")) {
-            writer.write(json.toString());
+            writer.write("[\n" + String.join(",\n", storedJsonEntries) + "\n]");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Could not store message: " + e.getMessage());
+            System.out.println("Could not write messages.json: " + e.getMessage());
         }
     }
 
+    // Escapes characters that are not allowed raw inside a JSON string
     private static String escape(String s) {
-        return s.replace("\\", "\\\\").replace("\"", "\\\"")
-                .replace("\n", "\\n").replace("\r", "");
+        return s.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 
-    public String details() {
-        return "Message ID: " + messageID
-                + "\nMessage Hash: " + messageHash
-                + "\nRecipient: " + recipient
-                + "\nMessage: " + messageText;
+    public String getMessageID() {
+        return messageID;
     }
 
-    // Used by unit tests to start from a clean slate
-    public static void resetAll() {
-        sentMessages.clear();
-        storedMessages.clear();
-        totalSent = 0;
+    public String getMessageHash() {
+        return hash;
     }
 
-    public String getMessageID() { return messageID; }
-    public int getMessageNumber() { return messageNumber; }
-    public String getRecipient() { return recipient; }
-    public String getMessageText() { return messageText; }
-    public String getMessageHash() { return messageHash; }
+    public int getMessageNumber() {
+        return messageNumber;
+    }
 }
