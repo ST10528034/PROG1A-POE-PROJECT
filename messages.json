@@ -1,9 +1,9 @@
 [
   {
-    "messageID": "7430613388",
-    "messageNumber": 1,
-    "recipient": "0732991350",
-    "message": "hey",
-    "messageHash": "74:1:HEYHEY"
+    "messageID": "0012345678",
+    "messageNumber": 0,
+    "recipient": "+27718693002",
+    "message": "Hi Mike, can you join us for dinner tonight?",
+    "messageHash": "00:0:HITONIGHT"
   }
 ]

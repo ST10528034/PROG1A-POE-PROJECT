@@ -5,9 +5,9 @@
 
 package poe.part.pkg1;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class MessageTest {
 
@@ -15,7 +15,7 @@ public class MessageTest {
             "Hi Mike, can you join us for dinner tonight?";
     private static final String NUMBER = "+27718693002";
 
-    @BeforeEach
+    @Before
     public void setUp() {
         Message.resetAll();
     }
