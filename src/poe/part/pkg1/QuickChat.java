@@ -20,7 +20,7 @@ public class QuickChat {
         Login login = registerAndLogin();
 
         System.out.println("\n======================");
-        System.out.println("WELCOME TO QuickChat!");
+        System.out.println("WELCOME TO QUICKCHAT!");
         System.out.println("======================");
 
         int totalAllowed = readInt("How many messages do you wish to enter? ", 1);
@@ -28,7 +28,7 @@ public class QuickChat {
         int option = 0;
 
         while (option != 3) {
-            System.out.println("\nMenu");
+            System.out.println("\n===== Menu =====");
             System.out.println("1) Send Messages");
             System.out.println("2) Show recently sent messages");
             System.out.println("3) Quit");
