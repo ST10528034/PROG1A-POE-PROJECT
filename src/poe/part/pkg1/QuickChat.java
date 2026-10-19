@@ -19,9 +19,9 @@ public class QuickChat {
     public static void main(String[] args) {
         Login login = registerAndLogin();
 
-        System.out.println("\n====================");
+        System.out.println("\n======================");
         System.out.println("WELCOME TO QuickChat!");
-        System.out.println("====================");
+        System.out.println("======================");
 
         int totalAllowed = readInt("How many messages do you wish to enter? ", 1);
         int entered = 0;   // number of messages handled so far (also the next message number)
@@ -39,7 +39,7 @@ public class QuickChat {
                     entered = sendMessages(entered, totalAllowed);
                     break;
                 case 2:
-                    System.out.println("Coming Soon.");
+                    System.out.println("COMING SOON.");
                     break;
                 case 3:
                     System.out.println("Goodbye. Total messages sent: "

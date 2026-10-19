@@ -5,7 +5,7 @@
 package poe.part.pkg1;
 
 /**
- * Handles registration and login for QuickChat.
+ * This class Login Handles registration and login for QuickChat.
  */
 public class Login {
 
