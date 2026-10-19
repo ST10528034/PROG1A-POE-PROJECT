@@ -35,18 +35,11 @@ public class QuickChat {
             option = readInt("Choose an option: ", 0);
 
             switch (option) {
-                case 1:
-                    entered = sendMessages(entered, totalAllowed);
-                    break;
-                case 2:
-                    System.out.println("COMING SOON.");
-                    break;
-                case 3:
-                    System.out.println("Goodbye. Total messages sent: "
+                case 1 -> entered = sendMessages(entered, totalAllowed);
+                case 2 -> System.out.println("COMING SOON.");
+                case 3 -> System.out.println("Goodbye. Total messages sent: "
                             + Message.returnTotalMessages());
-                    break;
-                default:
-                    System.out.println("Invalid option. Please choose 1, 2 or 3.");
+                default -> System.out.println("Invalid option. Please choose 1, 2 or 3.");
             }
         }
     }

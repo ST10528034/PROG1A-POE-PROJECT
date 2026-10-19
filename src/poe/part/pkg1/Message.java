@@ -134,7 +134,7 @@ public final class Message {
     // 1 = send, 2 = disregard, 3 = store
     public String sentMessage(int choice) {
         switch (choice) {
-            case 1:
+            case 1 -> {
                 messageIdsList.add(messageID);
                 recipientNumber.add(recipient);
                 messages.add(text);
@@ -142,13 +142,17 @@ public final class Message {
                 messageStatus.add("Sent");
                 numMessageSent++;
                 return "Message successfully sent.";
-            case 2:
+            }
+            case 2 -> {
                 return "Press 0 to delete the message.";
-            case 3:
+            }
+            case 3 -> {
                 storeMessage();
                 return "Message successfully stored.";
-            default:
+            }
+            default -> {
                 return "Invalid option.";
+            }
         }
     }
 
